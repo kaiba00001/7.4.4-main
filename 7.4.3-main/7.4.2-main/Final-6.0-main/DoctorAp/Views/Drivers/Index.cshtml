@@ -1,0 +1,72 @@
+﻿
+@model IEnumerable<DoctorAp.Models.Driver>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DriverName)
+            </th>
+            <th>
+                Delivered
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DriverName)
+                </td>
+                <td>
+                    <input type="checkbox" class="delivered-checkbox" data-driver-id="@item.Id" @(item.Delivered ? "checked" : "") />
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delivered-checkbox').change(function () {
+                var driverId = $(this).data('driver-id');
+                var isChecked = $(this).prop('checked');
+
+                $.ajax({
+                    url: '@Url.Action("UpdateDeliveredStatus", "Drivers")',
+                    type: 'POST',
+                    data: { id: driverId, delivered: isChecked },
+                    success: function (result) {
+                        console.log(result);
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
+}
