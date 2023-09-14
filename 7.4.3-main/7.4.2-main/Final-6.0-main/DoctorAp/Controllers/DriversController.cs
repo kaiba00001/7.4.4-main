@@ -183,5 +183,30 @@ namespace DoctorAp.Controllers
 
             return Json(new { success = false });
         }
+         [HttpPost]
+ public IActionResult DeleteSelected(List<int> selectedDrivers)
+ {
+     if (selectedDrivers == null || selectedDrivers.Count == 0)
+     {
+         return Json(new { success = false });
+     }
+
+     var deletedDrivers = new List<int>();
+
+     foreach (var driverId in selectedDrivers)
+     {
+         var driver = _context.Drivers.Find(driverId);
+
+         if (driver != null)
+         {
+             _context.Drivers.Remove(driver);
+             deletedDrivers.Add(driverId);
+         }
+     }
+
+     _context.SaveChanges();
+
+     return Json(new { success = true, deletedDrivers = deletedDrivers });
+ }
     }
 }
